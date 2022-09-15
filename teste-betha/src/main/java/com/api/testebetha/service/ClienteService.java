@@ -8,7 +8,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+    @Service
     public class ClienteService {
 
     static ClienteRepository clienteRepository;
@@ -21,7 +21,7 @@ import java.util.Optional;
         return clienteRepository.save(clienteModel); //Metodoso save pega nosso repositorio jpa de repository, e salva na nossa entidade clienteModel.
     }
 
-        public List<ClienteModel> findAll() {
+    public List<ClienteModel> findAll() {
         return clienteRepository.findAll();
         }
 

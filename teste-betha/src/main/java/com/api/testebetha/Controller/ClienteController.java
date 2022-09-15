@@ -1,7 +1,9 @@
 package com.api.testebetha.Controller;
 
 import com.api.testebetha.Model.ClienteModel;
-import com.api.testebetha.dto.ClienteDto;
+import com.api.testebetha.Controller.dto.ClienteDto;
+import com.api.testebetha.Model.EmpresaModel;
+import com.api.testebetha.Repository.EmpresaRepository;
 import com.api.testebetha.service.ClienteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -18,13 +20,16 @@ import java.util.Optional;
 @RequestMapping("/cliente")
 public class ClienteController {
     final ClienteService clienteService;
+    final EmpresaRepository empresaRepository;
 
-    public ClienteController(ClienteService clienteService) {
+    public ClienteController(ClienteService clienteService, EmpresaRepository empresaRepository) {
         this.clienteService = clienteService;
+        this.empresaRepository = empresaRepository;
     }
 
     @PostMapping("/cadastro")
     public ResponseEntity<Object> saveCliente(@RequestBody @Valid ClienteDto clienteDto){ // ResponseEntity vai montar uma resposta tanto com o status quanto o corpo da resposta e o Object porque pode ter outros tipos de retorno dependendo das verificações
+        Optional<EmpresaModel> empresaModel = empresaRepository.findById(clienteDto.getEmpresa());
         //@Valid para validar as validaçoes notblank do nosso DTO
         if (clienteService.existsByTelefone(clienteDto.getTelefone())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Este numero de telefone Já existe");
@@ -35,8 +40,9 @@ public class ClienteController {
         var clienteModel = new ClienteModel();
         BeanUtils.copyProperties(clienteDto, clienteModel); //converte o Dto em Model, estamos recependo DTO mas salva no nosso Model.
         clienteModel.setDh_criacao(LocalDateTime.now());
+        clienteModel.setEmpresa(empresaModel.get());
         return ResponseEntity.status(HttpStatus.CREATED).body(ClienteService.save(clienteModel));
-        //Controi como retorno a resposta, responseEntity.status, onde é passado o statusHttpCreate, e no body o retorno do metodo save para salvar no banco de dados.
+        //Controi como retorno a resposta, responseEntity.status, on    de é passado o statusHttpCreate, e no body o retorno do metodo save para salvar no banco de dados.
     }
 
     @GetMapping
@@ -75,4 +81,6 @@ public class ClienteController {
         clienteModel.setDh_criacao(clienteModelOptional.get().getDh_criacao());
         return ResponseEntity.status(HttpStatus.OK).body(clienteService.save(clienteModel));
     }
+
+
 }

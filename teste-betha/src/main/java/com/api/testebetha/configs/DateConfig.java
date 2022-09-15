@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Configuration //Configuração do spring
